@@ -516,12 +516,13 @@ public class ActionController<ActionViewType: UICollectionViewCell, ActionDataTy
             },
             completion: { [weak self] _ in
                 self?.onDidDismissView()
+                completion?(true)
             })
 
-        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(animationDuration * 0.25 * Double(NSEC_PER_SEC)))
-        dispatch_after(delayTime, dispatch_get_main_queue()) {
-            completion?(true)
-        }
+//        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(animationDuration * 0.25 * Double(NSEC_PER_SEC)))
+//        dispatch_after(delayTime, dispatch_get_main_queue()) {
+//            completion?(true)
+//        }
     }
     
     public func onWillPresentView() {
@@ -590,7 +591,7 @@ public class ActionController<ActionViewType: UICollectionViewCell, ActionDataTy
         return collectionView.cellForItemAtIndexPath(unwrappedPrevPath) as? ActionViewType
     }
 
-    func hasHeader() -> Bool {
+    public func hasHeader() -> Bool {
         return headerData != nil && headerSpec != nil
     }
     
@@ -708,13 +709,18 @@ public class DynamicsActionController<ActionViewType: UICollectionViewCell, Acti
     // MARK: - Overrides
     
     public override func dismiss() {
+        dismiss(nil)
+    }
+
+    public override func dismiss(completion: (() -> ())?) {
+
         animator.addBehavior(gravityBehavior)
         
         UIView.animateWithDuration(settings.animation.dismiss.duration, animations: { [weak self] in
             self?.backgroundView.alpha = 0.0
         }) 
         
-        presentingViewController?.dismissViewControllerAnimated(true, completion: nil)
+        presentingViewController?.dismissViewControllerAnimated(true, completion: completion)
     }
 
     public override func dismissView(presentedView: UIView, presentingView: UIView, animationDuration: Double, completion: ((Bool) -> Void)?) {
