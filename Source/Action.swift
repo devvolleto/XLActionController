@@ -32,7 +32,7 @@ public enum ActionStyle {
     case Destructive
 }
 
-public struct Action<T> {
+public class Action<T> {
 
     public var enabled: Bool
     public var executeImmediatelyOnTouch = false
